@@ -9,17 +9,15 @@ RUN apk add --update musl \
     && apk add -t build-tools go mercurial git \
     && mkdir /go \
     && cd /go \
-    && go get -tags=$CADDY_TAG github.com/mholt/caddy \
-    && mv $GOPATH/bin/caddy /bin \
-    && mkdir /caddy \
+    && go get -v -tags=$CADDY_TAG github.com/mholt/caddy \
+    && mkdir -p /{caddy,root/.caddy,logs} \
     && apk del --purge build-tools go mercurial git \
     && rm -rf /go /var/cache/apk/*
 
-ADD dicker-init.sh  /bin/docker-init.sh
+ADD docker-init.sh  /bin/docker-init.sh
 CMD chmod a+x /bin/docker-init.sh
 
 EXPOSE     2015 80 443
-CMD mkdir -p /{caddy,root/.caddy,logs}
 VOLUME     /caddy /root/.caddy /logs
 WORKDIR    /caddy
 ENTRYPOINT ["/bin/docker-init.sh"]
